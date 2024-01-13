@@ -1,6 +1,5 @@
 const input = document.querySelector("#fruit");
 const suggestions = document.querySelector(".suggestions ul");
-let results = [];
 
 const fruit = [
   "Apple",
@@ -85,18 +84,16 @@ const fruit = [
 ];
 
 function search(str) {
-  return fruit.filter((text) => {
-    lowerCaseText = text.toLowerCase();
-    return lowerCaseText.includes(str.toLowerCase());
-  });
+  return fruit.filter((text) => text.toLowerCase().includes(str.toLowerCase()));
 }
 
 function searchHandler(e) {
-  if (input.value === "") {
+  const inputVal = e.target.value;
+
+  if (inputVal === "") {
     toggleSuggestion(suggestions);
   } else {
-    results = search(input.value);
-    showSuggestions(results, input.value);
+    showSuggestions(search(inputVal), inputVal);
   }
 }
 
@@ -111,7 +108,13 @@ function showSuggestions(results, inputVal) {
 }
 
 function useSuggestion(e) {
-  input.value = e.target.textContent;
+  debugger;
+  if (e.target.tagName === "STRONG") {
+    input.value = e.target.parentElement.textContent;
+  } else {
+    input.value = e.target.textContent;
+  }
+
   toggleSuggestion(suggestions);
 }
 
@@ -125,14 +128,11 @@ function getStyledList(results, inputVal) {
     const lowerCaseText = each.toLowerCase();
     const index = lowerCaseText.indexOf(lowerCaseInput);
 
-    if (index !== -1) {
-      const beforeMatch = each.substring(0, index);
-      const matchedText = each.substring(index, index + inputVal.length);
-      const afterMatch = each.substring(index + inputVal.length);
-      return `<li>${beforeMatch}<strong>${matchedText}</strong>${afterMatch}</li>`;
-    } else {
-      return `<li>${each}</li>`;
-    }
+    const beforeMatch = each.substring(0, index);
+    const matchedText = each.substring(index, index + inputVal.length);
+    const afterMatch = each.substring(index + inputVal.length);
+
+    return `<li>${beforeMatch}<strong>${matchedText}</strong>${afterMatch}</li>`;
   });
 }
 
